@@ -3,8 +3,9 @@ const BASE_URL = process.env.REACT_APP_BASE_URL;
 // AUTH ENDPOINTS
 export const endpoints = {
   // SENDOTP_API: "/auth/sendotp",
-  SIGNUP_API: "http://localhost:4000/api/v1/auth/signUp",
+  // SIGNUP_API: "http://localhost:4000/api/v1/auth/signUp",
   // LOGIN_API: "/auth/login",
+  SIGNUP_API: BASE_URL + "/auth/signup",
   LOGIN_API: "http://localhost:4000/api/v1/auth/login",
   SENDOTP_API: "http://localhost:4000/api/v1/auth/sendOTP",
   RESETPASSTOKEN_API: BASE_URL + "/auth/reset-password-token",

@@ -11,6 +11,9 @@ import Signup from "./Pages/Signup.jsx";
 import ForgotPassword from "./Pages/ForgotPassword.jsx";
 import UpdatePassword from "./Pages/UpdatePassword.jsx";
 
+import EmailVerify from "./Pages/EmailVerify.jsx";
+
+// import VerifyEmail from "./Pages/VerifyEmail";
 function App() {
   return (
     <div className="w-screen min-h-screen bg-[#000916] flex flex-col font-inter">
@@ -21,6 +24,9 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/update-password/:id" element={<UpdatePassword />} />
+        {/* <Route path="/verify-email" element={<VerifyEmail />} /> */}
+
+        <Route path="/verify-email" element={<EmailVerify />} />
       </Routes>
     </div>
   );

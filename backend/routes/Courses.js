@@ -34,7 +34,7 @@ const {
 
 const {
   createcategory,
-  showAllCategory,
+  showAllCategories,
   categoryPageDetails,
 } = require("../controllers/Category");
 
@@ -81,7 +81,7 @@ router.delete("/deleteSubsection", auth, isInstructor, deleteSubsection);
 // category can only be created by admin
 
 router.post("/createcategory", auth, isAdmin, createcategory);
-router.get("/showAllCategory", auth, showAllCategory);
+router.get("/showAllCategories", showAllCategories);
 router.get("/getcategoryPageDetails", categoryPageDetails);
 
 // ********************************************************************************************************

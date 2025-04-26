@@ -1,19 +1,15 @@
-import React from "react";
-import { toast } from "react-hot-toast";
-import { IoEyeSharp } from "react-icons/io5";
-import { FaEyeSlash } from "react-icons/fa";
-
 import { useState } from "react";
+import { toast } from "react-hot-toast";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { sendOtp } from "../../../services/operations/authAPI";
 import { setSignupData } from "../../../slices/authSlice";
 import { ACCOUNT_TYPE } from "../../../utils/constants";
-
 import Tab from "../../common/Tab";
 
-function SignupForm({}) {
+function SignupForm() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -32,6 +28,7 @@ function SignupForm({}) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { firstName, lastName, email, password, confirmPassword } = formData;
+
   // Handle input fields, when some value changes
   const handleOnChange = (e) => {
     setFormData((prevData) => ({
@@ -83,16 +80,17 @@ function SignupForm({}) {
       type: ACCOUNT_TYPE.INSTRUCTOR,
     },
   ];
+
   return (
     <div>
       {/* Tab */}
       <Tab tabData={tabData} field={accountType} setField={setAccountType} />
       {/* Form */}
-      <form onSubmit={handleOnSubmit}>
+      <form onSubmit={handleOnSubmit} className="flex w-full flex-col gap-y-4">
         <div className="flex gap-x-4">
-          <label htmlFor="">
-            <p className="mt-4 mb-1 text-[0.875rem] leading-[1.375rem] text-[#F1F2FF]">
-              First Name <sup className="text-[#EF476F]">*</sup>
+          <label>
+            <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
+              First Name <sup className="text-pink-200">*</sup>
             </p>
             <input
               required
@@ -100,13 +98,16 @@ function SignupForm({}) {
               name="firstName"
               value={firstName}
               onChange={handleOnChange}
-              placeholder="Enter First name"
-              className="font-medium w-full rounded-[0.5rem] bg-[#161D29]  p-[12px] text-[#F1F2FF]"
+              placeholder="Enter first name"
+              style={{
+                boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+              }}
+              className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
             />
           </label>
-          <label htmlFor="">
-            <p className="mt-4 mb-1 text-[0.875rem] leading-[1.375rem] text-[#F1F2FF]">
-              Last Name <sup className="text-[#EF476F]">*</sup>
+          <label>
+            <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
+              Last Name <sup className="text-pink-200">*</sup>
             </p>
             <input
               required
@@ -114,17 +115,18 @@ function SignupForm({}) {
               name="lastName"
               value={lastName}
               onChange={handleOnChange}
-              placeholder="Enter Last name"
-              className="font-medium w-full rounded-[0.5rem] bg-[#161D29]  p-[12px] text-[#F1F2FF]"
+              placeholder="Enter last name"
+              style={{
+                boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+              }}
+              className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
             />
           </label>
         </div>
-
         <label className="w-full">
-          <p className="mt-4 mb-1 text-[0.875rem] leading-[1.375rem] text-[#F1F2FF]">
-            Email Address <sup className="text-[#EF476F]">*</sup>
+          <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
+            Email Address <sup className="text-pink-200">*</sup>
           </p>
-
           <input
             required
             type="text"
@@ -132,14 +134,16 @@ function SignupForm({}) {
             value={email}
             onChange={handleOnChange}
             placeholder="Enter email address"
-            className="font-medium w-full rounded-[0.5rem] bg-[#161D29]  p-[12px] text-[#F1F2FF]"
+            style={{
+              boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+            }}
+            className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
           />
         </label>
-
         <div className="flex gap-x-4">
           <label className="relative">
-            <p className="mt-4 mb-1 text-[0.875rem] leading-[1.375rem] text-[#F1F2FF]">
-              Create password <sup className="text-[#EF476F]">*</sup>
+            <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
+              Create Password <sup className="text-pink-200">*</sup>
             </p>
             <input
               required
@@ -148,22 +152,25 @@ function SignupForm({}) {
               value={password}
               onChange={handleOnChange}
               placeholder="Enter Password"
-              className="font-medium w-full rounded-[0.5rem] bg-[#161D29]  p-[12px] text-[#F1F2FF]"
+              style={{
+                boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+              }}
+              className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] pr-10 text-richblack-5"
             />
             <span
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute  right-3 top-[55px] z-[10] cursor-pointer text-white "
+              className="absolute right-3 top-[38px] z-[10] cursor-pointer"
             >
               {showPassword ? (
-                <IoEyeSharp fontSize={24} />
+                <AiOutlineEyeInvisible fontSize={24} fill="#AFB2BF" />
               ) : (
-                <FaEyeSlash fontSize={24} />
+                <AiOutlineEye fontSize={24} fill="#AFB2BF" />
               )}
             </span>
           </label>
           <label className="relative">
-            <p className="mt-4 mb-1 text-[0.875rem] leading-[1.375rem] text-[#F1F2FF]">
-              Confirm Password <sup className="text-[#EF476F]">*</sup>
+            <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
+              Confirm Password <sup className="text-pink-200">*</sup>
             </p>
             <input
               required
@@ -172,24 +179,26 @@ function SignupForm({}) {
               value={confirmPassword}
               onChange={handleOnChange}
               placeholder="Confirm Password"
-              className="font-medium w-full rounded-[0.5rem] bg-[#161D29]  p-[12px] text-[#F1F2FF]"
+              style={{
+                boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+              }}
+              className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] pr-10 text-richblack-5"
             />
             <span
               onClick={() => setShowConfirmPassword((prev) => !prev)}
-              className="absolute  right-3 top-[55px] z-[10] cursor-pointer text-white "
+              className="absolute right-3 top-[38px] z-[10] cursor-pointer"
             >
               {showConfirmPassword ? (
-                <IoEyeSharp fontSize={24} />
+                <AiOutlineEyeInvisible fontSize={24} fill="#AFB2BF" />
               ) : (
-                <FaEyeSlash fontSize={24} />
+                <AiOutlineEye fontSize={24} fill="#AFB2BF" />
               )}
             </span>
           </label>
         </div>
-
         <button
           type="submit"
-          className="w-full mt-6 rounded-[8px] bg-[#FFD60A] py-[8px] px-[12px] font-medium text-[#000814] "
+          className="w-full mt-6 rounded-[8px] bg-[#FFD60A] py-[8px] px-[12px] font-medium text-[#000814]"
         >
           Create Account
         </button>

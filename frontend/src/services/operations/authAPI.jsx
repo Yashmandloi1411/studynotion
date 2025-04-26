@@ -1,50 +1,54 @@
 import axios from "axios";
 import { apiConnector } from "../apiconnector";
 import { toast } from "react-hot-toast";
-
+import { resetCart } from "../../slices/cartSlice";
 import { setLoading, setToken } from "../../slices/authSlice";
-//import { resetCart } from "../../slices/cartSlice";
-// import { setUser } from "../../slices/profileSlice";
 import { endpoints } from "../apis";
+import { setUser } from "../../slices/profileSlice";
 // API Endpoints
-const SEND_OTP_API = "/auth/sendotp";
-const SIGNUP_API = "/auth/signup";
-const { LOGIN_API, RESETPASSTOKEN_API, RESETPASSWORD_API } = endpoints;
+// const SEND_OTP_API = "/auth/sendotp";
+// const SIGNUP_API = "/auth/signup";
+const {
+  LOGIN_API,
+  RESETPASSTOKEN_API,
+  RESETPASSWORD_API,
+  SENDOTP_API,
+  SIGNUP_API,
+} = endpoints;
 
 // SEND OTP FUNCTION
-export const sendOtp = async (email) => {
-  try {
-    const response = await apiConnector({
-      method: "POST",
-      url: SEND_OTP_API,
-      bodyData: {
-        email: email,
-      },
-    });
-    console.log("SEND OTP RESPONSE", response.data);
-    return response.data;
-  } catch (error) {
-    console.log("SENDOTP API ERROR............", error);
-    throw error;
-  }
-};
+
+export function sendOtp(email, navigate) {
+  return async (dispatch) => {
+    const toastId = toast.loading("Loading...");
+    dispatch(setLoading(true));
+    try {
+      const response = await apiConnector("POST", SENDOTP_API, {
+        email,
+        checkUserPresent: true,
+      });
+      console.log("SENDOTP API RESPONSE............", response);
+
+      console.log(response.data.success);
+
+      if (!response.data.success) {
+        throw new Error(response.data.message);
+      }
+
+      toast.success("OTP Sent Successfully");
+      navigate("/verify-email");
+    } catch (error) {
+      console.log("SENDOTP API ERROR............", error);
+      toast.error("Could Not Send OTP");
+    }
+    dispatch(setLoading(false));
+    toast.dismiss(toastId);
+  };
+}
 
 // SIGNUP FUNCTION
-// export const signup = async (signupData) => {
-//   try {
-//     const response = await apiConnector({
-//       method: "POST",
-//       url: SIGNUP_API,
-//       bodyData: signupData,
-//     });
-//     console.log("SIGNUP RESPONSE", response.data);
-//     return response.data;
-//   } catch (error) {
-//     console.log("SIGNUP API ERROR............", error);
-//     throw error;
-//   }
-// };
-export function signUp(
+
+export function signup(
   accountType,
   firstName,
   lastName,
@@ -55,8 +59,20 @@ export function signUp(
   navigate
 ) {
   return async (dispatch) => {
-    const toastId = toast.loading("Loading...");
+    //const toastId = toast.loading("Signing up...");
     dispatch(setLoading(true));
+
+    // 🧠 Debug payload
+    console.log("SIGNUP PAYLOAD:", {
+      accountType,
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      otp,
+    });
+
     try {
       const response = await apiConnector("POST", SIGNUP_API, {
         accountType,
@@ -73,36 +89,87 @@ export function signUp(
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
+
       toast.success("Signup Successful");
-      navigate("/login");
+
+      if (typeof navigate === "function") {
+        navigate("/login");
+      }
     } catch (error) {
-      console.log("SIGNUP API ERROR............", error);
-      toast.error("Signup Failed");
-      navigate("/signup");
+      console.error("SIGNUP ERROR:", error);
+
+      // 👇 Add more detailed error logging
+      if (error.response) {
+        console.log("SIGNUP ERROR DATA:", error.response.data);
+        console.log("SIGNUP ERROR STATUS:", error.response.status);
+      }
+
+      toast.error(error?.response?.data?.message || "Signup Failed");
     }
+
+    dispatch(setLoading(false));
+  };
+}
+
+//LOGIN FUNCTION
+
+export function login(email, password, navigate) {
+  return async (dispatch) => {
+    const toastId = toast.loading("Loading...");
+    dispatch(setLoading(true));
+
+    try {
+      const response = await apiConnector("POST", LOGIN_API, {
+        email,
+        password,
+      });
+
+      console.log("LOGIN API RESPONSE............", response);
+
+      if (!response.data.success) {
+        throw new Error(response.data.message);
+      }
+
+      toast.success("Login Successful");
+
+      // ✅ SAFELY ACCESS USER
+      const user = response.data?.userexist;
+      if (!user) {
+        throw new Error("User data is missing");
+      }
+
+      dispatch(setToken(response.data.token));
+
+      const userImage = user.image
+        ? user.image
+        : `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName} ${user.lastName}`;
+
+      dispatch(setUser({ ...user, image: userImage }));
+
+      localStorage.setItem("token", JSON.stringify(response.data.token));
+      localStorage.setItem("user", JSON.stringify(user));
+      navigate("/dashboard/my-profile");
+    } catch (error) {
+      console.log("LOGIN API ERROR............", error);
+      toast.error("Login Failed");
+    }
+
     dispatch(setLoading(false));
     toast.dismiss(toastId);
   };
 }
 
-// LOGIN FUNCTION
-
-export const login = async (email, password) => {
-  try {
-    const response = await axios.post(
-      LOGIN_API,
-      { email, password },
-      { withCredentials: true }
-    );
-
-    console.log("LOGIN RESPONSE", response.data);
-    return response.data;
-  } catch (error) {
-    console.log("LOGIN API ERROR............", error);
-
-    return null;
-  }
-};
+export function logout(navigate) {
+  return (dispatch) => {
+    dispatch(setToken(null));
+    dispatch(setUser(null));
+    dispatch(resetCart());
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    toast.success("Logged Out");
+    navigate("/");
+  };
+}
 
 const getPasswordResetToken = (email, setEmailSent) => {
   return async (dispatch) => {
